@@ -132,3 +132,10 @@ dmypy.json
 models/*
 data/*
 runs/*
+pretrained/bevfusion-det.pth
+pretrained/bevfusion-seg.pth
+pretrained/camera-only-det.pth
+pretrained/camera-only-seg.pth
+pretrained/lidar-only-det.pth
+pretrained/lidar-only-seg.pth
+pretrained/swint-nuimages-pretrained.pth
