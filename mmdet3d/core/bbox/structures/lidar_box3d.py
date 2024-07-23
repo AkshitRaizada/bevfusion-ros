@@ -87,6 +87,10 @@ class LiDARInstance3DBoxes(BaseInstance3DBoxes):
         return corners
 
     @property
+    def xyz(self):
+        return (self.tensor[:, 0] , self.tensor[:, 1] , self.tensor[:, 2], self.tensor[:, 3] , self.tensor[:, 4] , self.tensor[:, 5])
+
+    @property
     def bev(self):
         """torch.Tensor: 2D BEV box of each box with rotation
         in XYWHR format."""

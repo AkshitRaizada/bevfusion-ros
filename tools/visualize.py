@@ -1,3 +1,5 @@
+#torchpack dist-run -np 1 python tools/visualize.py configs/nuscenes/det/transfusion/secfpn/camera+lidar/swint_v0p075/convfuser.yaml --mode pred --checkpoint pretrained/bevfusion-det.pth --out-dir results/visualize --bbox-score 0.1
+
 import argparse
 import copy
 import os
@@ -16,8 +18,8 @@ from mmdet3d.core import LiDARInstance3DBoxes
 from mmdet3d.core.utils import visualize_camera, visualize_lidar, visualize_map
 from mmdet3d.datasets import build_dataloader, build_dataset
 from mmdet3d.models import build_model
-
-
+from mmcv.runner import wrap_fp16_model
+import pdb
 def recursive_eval(obj, globals=None):
     if globals is None:
         globals = copy.deepcopy(obj)
@@ -59,6 +61,7 @@ def main() -> None:
 
     # build the dataloader
     dataset = build_dataset(cfg.data[args.split])
+    # pdb.set_trace()
     dataflow = build_dataloader(
         dataset,
         samples_per_gpu=1,
@@ -70,6 +73,9 @@ def main() -> None:
     # build the model and load checkpoint
     if args.mode == "pred":
         model = build_model(cfg.model)
+        fp16_cfg = cfg.get("fp16", None)
+        if fp16_cfg is not None:
+            wrap_fp16_model(model)
         load_checkpoint(model, args.checkpoint, map_location="cpu")
 
         model = MMDistributedDataParallel(

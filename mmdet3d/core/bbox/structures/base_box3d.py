@@ -69,6 +69,10 @@ class BaseInstance3DBoxes:
         return self.tensor[:, 3] * self.tensor[:, 4] * self.tensor[:, 5]
 
     @property
+    def dims_out(self):
+        return self.tensor[:, 0] , self.tensor[:, 1] , self.tensor[:, 2], self.tensor[:, 3] , self.tensor[:, 4] , self.tensor[:, 5]
+
+    @property
     def dims(self):
         """torch.Tensor: Corners of each box with size (N, 8, 3)."""
         return self.tensor[:, 3:6]

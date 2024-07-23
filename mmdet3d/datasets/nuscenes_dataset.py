@@ -200,6 +200,13 @@ class NuScenesDataset(Custom3DDataset):
             list[dict]: List of annotations sorted by timestamps.
         """
         data = mmcv.load(ann_file)
+        #print("")
+        #print("")
+        #print("")
+        #print(data)
+        #print("")
+        #print("")
+        #print("")
         data_infos = list(sorted(data["infos"], key=lambda e: e["timestamp"]))
         data_infos = data_infos[:: self.load_interval]
         self.metadata = data["metadata"]
@@ -215,8 +222,8 @@ class NuScenesDataset(Custom3DDataset):
             lidar_path=info["lidar_path"],
             sweeps=info["sweeps"],
             timestamp=info["timestamp"],
-            location=info.get('location', None), 
-            radar=info.get('radars', None), 
+            location=info.get('location', None),
+            radar=info.get('radars', None),
         )
 
         if data['location'] is None:
@@ -248,15 +255,19 @@ class NuScenesDataset(Custom3DDataset):
                 data["image_paths"].append(camera_info["data_path"])
 
                 # lidar to camera transform
+                print("camera_info[sensor2lidar_rotation] = " + str(camera_info["sensor2lidar_rotation"]))
                 lidar2camera_r = np.linalg.inv(camera_info["sensor2lidar_rotation"])
+                print("lidar2camera_r = " + str(lidar2camera_r))
                 lidar2camera_t = (
                     camera_info["sensor2lidar_translation"] @ lidar2camera_r.T
                 )
+                print("camera_info[sensor2lidar_translation] = "+ str(camera_info["sensor2lidar_translation"]))
+                print("lidar2camera_t = " + str(lidar2camera_t))
                 lidar2camera_rt = np.eye(4).astype(np.float32)
                 lidar2camera_rt[:3, :3] = lidar2camera_r.T
                 lidar2camera_rt[3, :3] = -lidar2camera_t
                 data["lidar2camera"].append(lidar2camera_rt.T)
-
+                print("lidar2camera_rt = " + str(lidar2camera_rt))
                 # camera intrinsics
                 camera_intrinsics = np.eye(4).astype(np.float32)
                 camera_intrinsics[:3, :3] = camera_info["cam_intrinsic"]
@@ -273,7 +284,10 @@ class NuScenesDataset(Custom3DDataset):
                 ).rotation_matrix
                 camera2ego[:3, 3] = camera_info["sensor2ego_translation"]
                 data["camera2ego"].append(camera2ego)
-
+                p
+                return 0
+                break
+                # sys.exit()
                 # camera to lidar transform
                 camera2lidar = np.eye(4).astype(np.float32)
                 camera2lidar[:3, :3] = camera_info["sensor2lidar_rotation"]
@@ -349,7 +363,7 @@ class NuScenesDataset(Custom3DDataset):
         nusc_annos = {}
         mapped_class_names = self.CLASSES
 
-        print("Start to convert detection format...")
+        #print("Start to convert detection format...")
         for sample_id, det in enumerate(mmcv.track_iter_progress(results)):
             annos = []
             boxes = output_to_nusc_box(det)
@@ -403,7 +417,7 @@ class NuScenesDataset(Custom3DDataset):
 
         mmcv.mkdir_or_exist(jsonfile_prefix)
         res_path = osp.join(jsonfile_prefix, "results_nusc.json")
-        print("Results writes to", res_path)
+        #print("Results writes to", res_path)
         mmcv.dump(nusc_submissions, res_path)
         return res_path
 
@@ -418,7 +432,7 @@ class NuScenesDataset(Custom3DDataset):
 
         Args:
             result_path (str): Path of the result file.
-            logger (logging.Logger | str | None): Logger used for printing
+            logger (logging.Logger | str | None): Logger used for #printing
                 related information during evaluation. Default: None.
             metric (str): Metric name used for evaluation. Default: 'bbox'.
             result_name (str): Result name in the metric prefix.
@@ -560,7 +574,7 @@ class NuScenesDataset(Custom3DDataset):
 
             if isinstance(result_files, dict):
                 for name in result_names:
-                    print("Evaluating bboxes of {}".format(name))
+                    #print("Evaluating bboxes of {}".format(name))
                     ret_dict = self._evaluate_single(result_files[name])
                 metrics.update(ret_dict)
             elif isinstance(result_files, str):

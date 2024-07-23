@@ -8,10 +8,24 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from ..bbox import LiDARInstance3DBoxes
+import torch
+import math
 
 __all__ = ["visualize_camera", "visualize_lidar", "visualize_map"]
 
 
+HEIGHT = {
+    "car": 1.573,
+    "truck": 3.236,
+    "construction_vehicle": 2.033,
+    "bus": 3.32,
+    "trailer": 3.889,
+    "barrier": 0.909,
+    "motorcycle": 1.619,
+    "bicycle": 1.21,
+    "pedestrian": 1.281,
+    "traffic_cone": 0.794,
+}
 OBJECT_PALETTE = {
     "car": (255, 158, 0),
     "truck": (255, 99, 71),
@@ -24,6 +38,7 @@ OBJECT_PALETTE = {
     "pedestrian": (0, 0, 230),
     "traffic_cone": (47, 79, 79),
 }
+
 
 MAP_PALETTE = {
     "drivable_area": (166, 206, 227),
@@ -81,6 +96,9 @@ def visualize_camera(
         coords = coords[..., :2].reshape(-1, 8, 2)
         for index in range(coords.shape[0]):
             name = classes[labels[index]]
+            # print((coords[0][0][0], coords[0][0][1]))
+            # print("Put text")
+            cv2.putText(canvas, text=str(index), org=(int(coords[index][0][0]), int(coords[index][0][1])), fontFace = cv2.FONT_HERSHEY_SIMPLEX, fontScale = 1, color = np.array(color or OBJECT_PALETTE[name]) / 255, thickness = 3)
             for start, end in [
                 (0, 1),
                 (0, 3),
@@ -106,8 +124,9 @@ def visualize_camera(
         canvas = canvas.astype(np.uint8)
     canvas = cv2.cvtColor(canvas, cv2.COLOR_BGR2RGB)
 
-    mmcv.mkdir_or_exist(os.path.dirname(fpath))
-    mmcv.imwrite(canvas, fpath)
+    # mmcv.mkdir_or_exist(os.path.dirname(fpath))
+    return canvas
+    # mmcv.imwrite(canvas, fpath)
 
 
 def visualize_lidar(
@@ -126,6 +145,8 @@ def visualize_lidar(
     fig = plt.figure(figsize=(xlim[1] - xlim[0], ylim[1] - ylim[0]))
 
     ax = plt.gca()
+    # ax2 = plt.axes()
+    # ax2.set_facecolor("black")
     ax.set_xlim(*xlim)
     ax.set_ylim(*ylim)
     ax.set_aspect(1)
@@ -139,17 +160,52 @@ def visualize_lidar(
             c="white",
         )
 
+    # print(str(bboxes))
+
     if bboxes is not None and len(bboxes) > 0:
-        coords = bboxes.corners[:, [0, 3, 7, 4, 0], :2]
+        coords = bboxes.corners[:, [0, 3, 7, 4, 0], :4]
+        # print("Visualizing")
+        # print(bboxes)
+        # print(bboxes[0])
+        # print(bboxes[0][1])
+        (x, y, z, x_size, y_size, z_size) = bboxes.xyz
+        # print(x)
+        # print(x[0])
+        # print(x[0][0])
+        # print("Params Set")
+        print("********************************************")
+        print("********************************************")
         for index in range(coords.shape[0]):
             name = classes[labels[index]]
+            print("Index   : "+str(index))
+            print("Class   : "+str(name))
+            # print("Location: ("+str(round(float(x[index]),2))+", "+str(round(float(y[index]),2))+", "+str(round(float(z[index]),2))+")")
+            print("Location: ("+str(round(float(x[index]),4))+", "+str(round(float(y[index]),4))+")")
+            print("Size    : ("+str(round(float(x_size[index]),4))+", "+str(round(float(y_size[index]),4))+", "+str(round(float(z_size[index]),4))+")")
+            print("-------------------------")
+            # print(index)
+            # print(coords)
+            # x = coords[index, :, 0][:-1]
+            # y = coords[index, :, 1][:-1]
+            # x_mean = torch.mean(x)
+            # y_mean = torch.mean(y)
+            # l1 = math.sqrt((x[0]-x[1])**2 + (y[0]-y[1])**2)
+            # l2 = math.sqrt((x[0]-x[3])**2 + (y[0]-y[3])**2)
+            # h = 1
+
+            # plt.text(float(x[index])+2.0, float(y[index])+2.0, "("+str(round(float(x_size[index]),2))+","+str(round(float(y_size[index]),2))+","+str(round(float(z_size[index]), 2))+")", fontsize = 140, color = np.array(color or OBJECT_PALETTE[name]) / 255)
+
+            plt.text(float(x[index])+1.0, float(y[index])+2.5, str(index), weight='bold',fontsize = 140, color = np.array(color or OBJECT_PALETTE[name]) / 255)
+
+            # print("plot")
+
             plt.plot(
                 coords[index, :, 0],
                 coords[index, :, 1],
                 linewidth=thickness,
                 color=np.array(color or OBJECT_PALETTE[name]) / 255,
             )
-
+    fpath = "/home/speed/temp.png"
     mmcv.mkdir_or_exist(os.path.dirname(fpath))
     fig.savefig(
         fpath,
@@ -159,7 +215,13 @@ def visualize_lidar(
         bbox_inches="tight",
         pad_inches=0,
     )
+    # fig.tight_layout(pad=0)
+    # fig.canvas.draw()
+    # img_plot = cv2.cvtColor(np.array(fig.canvas.renderer.buffer_rgba()), cv2.COLOR_RGBA2BGR)
+    # img_plot = img_plot.reshape(fig.canvas.get_width_height()[::-1] + (3,))
     plt.close()
+    # return img_plot
+    return 0
 
 
 def visualize_map(

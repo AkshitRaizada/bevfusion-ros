@@ -21,18 +21,17 @@ from mmdet.datasets.builder import PIPELINES
 from ..builder import OBJECTSAMPLERS
 from .utils import noise_per_object_v3_
 
-
 @PIPELINES.register_module()
 class GTDepth:
     def __init__(self, keyframe_only=False):
-        self.keyframe_only = keyframe_only 
+        self.keyframe_only = keyframe_only
 
     def __call__(self, data):
         sensor2ego = data['camera2ego'].data
-        cam_intrinsic = data['camera_intrinsics'].data 
-        img_aug_matrix = data['img_aug_matrix'].data 
+        cam_intrinsic = data['camera_intrinsics'].data
+        img_aug_matrix = data['img_aug_matrix'].data
         bev_aug_matrix = data['lidar_aug_matrix'].data
-        lidar2ego = data['lidar2ego'].data 
+        lidar2ego = data['lidar2ego'].data
         camera2lidar = data['camera2lidar'].data
         lidar2image = data['lidar2image'].data
 
@@ -46,7 +45,8 @@ class GTDepth:
         camera2lidar_rots = camera2lidar[..., :3, :3]
         camera2lidar_trans = camera2lidar[..., :3, 3]
 
-        points = data['points'].data 
+        points = data['points'].data
+        #print(str(data['points']) + "1")
         img = data['img'].data
 
         if self.keyframe_only:
@@ -90,7 +90,7 @@ class GTDepth:
             masked_dist = dist[c, on_img[c]]
             depth[c, masked_coords[:, 0], masked_coords[:, 1]] = masked_dist
 
-        data['depths'] = depth 
+        data['depths'] = depth
         return data
 
 
@@ -213,6 +213,7 @@ class GlobalRotScaleTrans:
                 data["points"].rotate(-theta)
                 data["points"].translate(translation)
                 data["points"].scale(scale)
+                #print(str(data['points']) + "2")
 
             if "radar" in data:
                 data["radar"].rotate(-theta)
@@ -349,6 +350,8 @@ class RandomFlip3D:
             if "gt_masks_bev" in data:
                 data["gt_masks_bev"] = data["gt_masks_bev"][:, ::-1, :].copy()
 
+            #print(str(data['points']) + "3")
+
         data["lidar_aug_matrix"][:3, :] = rotation @ data["lidar_aug_matrix"][:3, :]
         return data
 
@@ -404,6 +407,7 @@ class ObjectPaste:
 
         # change to float for blending operation
         points = data["points"]
+        #print(str(data['points']) + "4")
         if self.sample_2d:
             img = data["img"]
             gt_bboxes_2d = data["gt_bboxes"]
@@ -486,6 +490,7 @@ class ObjectNoise:
         """
         gt_bboxes_3d = data["gt_bboxes_3d"]
         points = data["points"]
+        #print(str(data['points']) + "5")
 
         # TODO: check this inplace function
         numpy_box = gt_bboxes_3d.tensor.numpy()
@@ -502,6 +507,7 @@ class ObjectNoise:
 
         data["gt_bboxes_3d"] = gt_bboxes_3d.new_box(numpy_box)
         data["points"] = points.new_point(numpy_points)
+        #print(str(data['points']) + "6")
         return data
 
 
@@ -519,8 +525,10 @@ class FrameDropout:
         offsets = torch.tensor(offsets)
 
         points = data["points"].tensor
+        #print(str(data['points']) + "7")
         indices = torch.isin(points[:, self.time_dim], offsets)
         data["points"].tensor = points[indices]
+        #print(str(data['points']) + "8")
         return data
 
 
@@ -528,6 +536,7 @@ class FrameDropout:
 class PointShuffle:
     def __call__(self, data):
         data["points"].shuffle()
+        #print(str(data['points']) + "9")
         return data
 
 
@@ -600,9 +609,11 @@ class PointsRangeFilter:
                 and 'pts_semantic_mask' keys are updated in the result dict.
         """
         points = data["points"]
+        #print(str(data['points']) + "10")
         points_mask = points.in_range_3d(self.pcd_range)
         clean_points = points[points_mask]
         data["points"] = clean_points
+        #print(str(data['points']) + "11")
 
         if "radar" in data:
             radar = data["radar"]
@@ -709,6 +720,7 @@ class PointSample:
                 and 'pts_semantic_mask' keys are updated in the result dict.
         """
         points = data["points"]
+        #print(str(data['points']) + "12")
         # Points in Camera coord can provide the depth information.
         # TODO: Need to suport distance-based sampling for other coord system.
         if self.sample_range is not None:
@@ -725,6 +737,7 @@ class PointSample:
             return_choices=True,
         )
         data["points"] = points
+        #print(str(data['points']) + "13")
         return data
 
     def __repr__(self):
@@ -766,6 +779,7 @@ class BackgroundPointsFilter:
                 and 'pts_semantic_mask' keys are updated in the result dict.
         """
         points = data["points"]
+        #print(str(data['points']) + "14")
         gt_bboxes_3d = data["gt_bboxes_3d"]
 
         # avoid groundtruth being modified
@@ -786,6 +800,7 @@ class BackgroundPointsFilter:
         valid_masks = ~np.logical_and(~foreground_masks, enlarge_foreground_masks)
 
         data["points"] = points[valid_masks]
+        #print(str(data['points']) + "15")
         return data
 
     def __repr__(self):
