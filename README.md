@@ -2,7 +2,6 @@
 ### Docker Installation
 (Instructions provided for Ubuntu. For other operating systems refer [this](https://docs.docker.com/engine/install/).) :-
 ```
-```bash
 # Add Docker's official GPG key:
 sudo apt-get update
 sudo apt-get install ca-certificates curl
