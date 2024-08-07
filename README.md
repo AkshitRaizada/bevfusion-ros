@@ -23,7 +23,7 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin 
 ```
 git clone [AIRL URL]
 cd bevfusion
-docker build . -t bevfusion
+export BUILDKIT_PROGRESS=plain ; docker build . -t bevfusion
 ```
 ### Run Container:-
 ```
