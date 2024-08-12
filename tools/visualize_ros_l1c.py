@@ -26,14 +26,15 @@ import torch
 from mmcv.runner import load_checkpoint
 from torchpack import distributed as dist
 from torchpack.utils.config import configs
-from torchpack.utils.tqdm import tqdm
+import tqdm
 
 from mmdet3d.core import LiDARInstance3DBoxes
 from mmdet3d.core.utils import visualize_camera, visualize_lidar, visualize_map
 from mmdet3d.datasets import build_dataloader, build_dataset
 from mmdet3d.models import build_model
 from mmcv.runner import wrap_fp16_model
-
+import os
+cwd = os.getcwd()
 from mmdet3d.core.bbox.structures.box_3d_mode import (
         Box3DMode,
         CameraInstance3DBoxes,
@@ -360,7 +361,7 @@ def main():
             )
             # cv2.imwrite("finally"+str(counter)+".png", img_lidar)
             # counter = counter + 1
-            img_lidar = cv2.imread("/home/speed/temp.png")
+            img_lidar = cv2.imread(str(cwd)+"/temp.png")
             lidar_msg = bridge.cv2_to_imgmsg(img_lidar, "bgr8")
             pub2.publish(lidar_msg)
 

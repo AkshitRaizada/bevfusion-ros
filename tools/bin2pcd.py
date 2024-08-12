@@ -5,9 +5,10 @@ import numpy as np
 from nuscenes.nuscenes import NuScenes
 from nuscenes.utils.data_classes import LidarPointCloud
 import open3d as o3d
+import os
+cwd = os.getcwd()
 
-
-nusc = NuScenes(version='v1.0-mini', dataroot='/home/speed/OffRoad-Work/test/bevfusion/data/nuscenes', verbose=False)
+nusc = NuScenes(version='v1.0-mini', dataroot=str(cwd)+'/data/nuscenes', verbose=False)
 
 # Get some random .pcd.bin file from nuScenes.
 pcd_bin_file = os.path.join(nusc.dataroot, nusc.get('sample_data', 'fdddd75ee1d94f14a09991988dab8b3e')['filename'])

@@ -16,6 +16,9 @@ import copy
 import os
 import glob
 import struct
+import os
+cwd = os.getcwd()
+
 rospy.init_node('pub_data', anonymous=True)
 pub=[]
 pub_lidar = []
@@ -62,7 +65,7 @@ def main():
     # import pickle
 
 
-    # with open('/home/speed/OffRoad-Work/test/bevfusion/data/nuscenes/nuscenes_infos_val.pkl', 'rb') as f:
+    # with open(str(cwd)+'/data/nuscenes/nuscenes_infos_val.pkl', 'rb') as f:
     #     data = pickle.load(f)
     #     print(data["infos"][0])    #dict_keys(['lidar_path', 'token', 'sweeps', 'cams', 'radars', 'lidar2ego_translation', 'lidar2ego_rotation', 'ego2global_translation', 'ego2global_rotation', 'timestamp', 'prev_token', 'location', 'gt_boxes', 'gt_names', 'gt_velocity', 'num_lidar_pts', 'num_radar_pts', 'valid_flag', 'prev'])
 
