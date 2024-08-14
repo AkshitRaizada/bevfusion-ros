@@ -67,7 +67,7 @@ python3 tools/create_data.py nuscenes --root-path ./data/nuscenes --out-dir ./da
 ```
 tmux
 ```
-Press `CTRL+b "` to split horizontally or `CTRL+b %` to split vertically. `CTRL+b ;` to switch between windows.
+Press `CTRL+b "` to split horizontally or `CTRL+b %` to split vertically. `CTRL+b [→, ←, ↑, ↓]` to switch between windows.
 Refer [link](https://www.shells.com/l/en-US/tutorial/Installing-and-using-tmux-on-Ubuntu-20-04) if you need more commands.
 ### Run code:-
 
