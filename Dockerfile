@@ -4,7 +4,7 @@ RUN apt-get update && apt-get install wget -yq
 RUN apt-get install build-essential g++ gcc tmux -y
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get install libgl1-mesa-glx libglib2.0-0 -y
-RUN apt-get install openmpi-bin openmpi-common libopenmpi-dev libgtk2.0-dev git -y
+RUN apt-get install openmpi-bin openmpi-common libopenmpi-dev libgtk2.0-dev git nano -y
 RUN export LD_LIBRARY_PATH=/usr/local/lib64:$LD_LIBRARY_PATH
 RUN export CUDA_HOME=/usr/local/cuda-11.3
 RUN export PATH=/usr/local/cuda-11.3/bin:$PATH
