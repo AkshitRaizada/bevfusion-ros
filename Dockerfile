@@ -1,7 +1,7 @@
 FROM nvidia/cuda:11.3.1-devel-ubuntu20.04
 
 RUN apt-get update && apt-get install wget -yq
-RUN apt-get install build-essential g++ gcc -y
+RUN apt-get install build-essential g++ gcc tmux -y
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get install libgl1-mesa-glx libglib2.0-0 -y
 RUN apt-get install openmpi-bin openmpi-common libopenmpi-dev libgtk2.0-dev git -y
