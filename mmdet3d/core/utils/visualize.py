@@ -10,6 +10,8 @@ from matplotlib import pyplot as plt
 from ..bbox import LiDARInstance3DBoxes
 import torch
 import math
+import os
+cwd = os.getcwd()
 
 __all__ = ["visualize_camera", "visualize_lidar", "visualize_map"]
 
@@ -205,7 +207,7 @@ def visualize_lidar(
                 linewidth=thickness,
                 color=np.array(color or OBJECT_PALETTE[name]) / 255,
             )
-    fpath = "/home/speed/temp.png"
+    fpath = str(cwd)+"/temp.png"
     mmcv.mkdir_or_exist(os.path.dirname(fpath))
     fig.savefig(
         fpath,
