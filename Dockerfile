@@ -30,9 +30,9 @@ RUN pip install torchpack
 RUN pip install mmcv==1.4.0 mmcv-full==1.4.0 mmdet==2.20.0
 RUN pip install nuscenes-devkit
 #RUN pip install mpi4py==3.0.3
+RUN pip install -r requirements.txt
 RUN pip install numba==0.48.0
 RUN pip install numpy==1.21.0
-RUN pip install -r requirements.txt
 RUN apt-get install ninja-build -y
 #RUN export MMCV_WITH_OPS=1
 #RUN pip install -v -e .
