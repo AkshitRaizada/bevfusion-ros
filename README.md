@@ -1,4 +1,3 @@
-REMOVE force=True if mmcv installed properly
 # BEVFusion Setup
 ### Docker Installation
 (Instructions provided for Ubuntu. For other operating systems refer [this](https://docs.docker.com/engine/install/).) :-
@@ -19,7 +18,7 @@ sudo apt-get update
 ```
 sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 ```
-For nvidia-docker:-
+**For nvidia-docker:-**
 ```
 curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
 distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
@@ -28,6 +27,31 @@ sudo apt-get update
 sudo apt-get install -y nvidia-docker2
 sudo pkill -SIGHUP dockerd
 sudo systemctl daemon-reload
+sudo systemctl restart docker
+```
+**Configure nvidia-docker**
+```
+sudo nano /etc/docker/daemon.json
+```
+And replace all the text in it with
+```
+{
+    "runtimes": {
+        "nvidia": {
+            "path": "nvidia-container-runtime",
+            "runtimeArgs": []
+        }
+    },
+    "default-runtime": "nvidia"
+}
+```
+For some systems, if nvidia-smi is not working inside the Docker container, you may have to run this:-
+```
+sudo nano /etc/nvidia-container-runtime/config.toml, then changed no-cgroups = false
+```
+and change line 13 ```no-cgroups = true``` to ```no-cgroups = false```
+Restart docker to see effect of these changes
+```
 sudo systemctl restart docker
 ```
 ### BEVFusion Installation :-
@@ -72,7 +96,6 @@ source /root/.bashrc
 conda activate bevfusion
 python setup.py develop
 conda install -c conda-forge mpi4py openmpi
-pip install mmcv==2.1.0 -f https://download.openmmlab.com/mmcv/dist/cu111/torch1.10/index.html
 ```
 If you mounted Nuscenes(or custom data in Nuscenes format), you need to run this command once:-
 ```
