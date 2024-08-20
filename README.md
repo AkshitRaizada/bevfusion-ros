@@ -42,10 +42,14 @@ bevfusion
 ├── data
 │   ├── nuscenes
 │   │   ├── maps
+│   │   │   ├── basemap
+│   │   │   ├── expansion
+│   │   │   ├── prediction
 │   │   ├── samples
 │   │   ├── sweeps
 │   │   ├── v1.0-mini
 ```
+In the example above, v1.0-mini contains files from Nuscenes Full Dataset(v1.0) and maps contains folders from Map expansion pack (v1.3) merged with the maps folder from v1.0-mini. All of these are available on the aforementioned website.
 ```
 cd bevfusion
 nvidia-docker run -it -v `pwd`/data:/usr/src/app/bevfusion/data --shm-size 16g bevfusion /bin/bash
