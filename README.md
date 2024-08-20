@@ -58,9 +58,26 @@ source /root/.bashrc
 conda activate bevfusion
 python setup.py develop
 conda install -c conda-forge mpi4py openmpi
+pip install mmcv==2.1.0 -f https://download.openmmlab.com/mmcv/dist/cu111/torch1.10/index.html
 ```
 If you mounted Nuscenes(or custom data in Nuscenes format), you need to run this command once:-
 ```
+apt-get install software-properties-common
+add-apt-repository ppa:ubuntu-toolchain-r/test
+nano /etc/apt/sources.list
+```
+Add the following lines to the bottom and save file:-
+```
+deb http://dk.archive.ubuntu.com/ubuntu/ xenial main
+deb http://dk.archive.ubuntu.com/ubuntu/ xenial universe
+```
+Run the following in the terminal:-
+```
+apt-get update
+apt-get install gcc-4.9
+apt-get upgrade libstdc++6
+apt-get dist-upgrade
+
 python3 tools/create_data.py nuscenes --root-path ./data/nuscenes --out-dir ./data/nuscenes --extra-tag nuscenes --version v1.0-mini
 ```
 ### For multiple terminals:-
