@@ -272,9 +272,7 @@ class NuScenesDataset(Custom3DDataset):
                 ).rotation_matrix
                 camera2ego[:3, 3] = camera_info["sensor2ego_translation"]
                 data["camera2ego"].append(camera2ego)
-                return 0
-                break
-                # sys.exit()
+
                 # camera to lidar transform
                 camera2lidar = np.eye(4).astype(np.float32)
                 camera2lidar[:3, :3] = camera_info["sensor2lidar_rotation"]
