@@ -104,7 +104,7 @@ conda activate bevfusion
 python setup.py develop
 conda install -c conda-forge mpi4py openmpi
 ```
-If you mounted Nuscenes(or custom data in Nuscenes format), you need to run this command once:-
+If you mounted Nuscenes(or custom data in Nuscenes format), you need to run these commands once(this step can be done outside the Docker image as well, these dependencies are specific to dataset preparation):-
 ```
 apt-get install software-properties-common
 add-apt-repository ppa:ubuntu-toolchain-r/test
