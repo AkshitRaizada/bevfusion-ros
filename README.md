@@ -89,6 +89,13 @@ cd bevfusion
 nvidia-docker run -it -v `pwd`/data:/usr/src/app/bevfusion/data --shm-size 16g bevfusion /bin/bash
 ```
 If you have a bag file instead of Nuscenes dataset, you can put it in this folder and it will appear in your image.
+**Viewable GUI Applications like rqt, rviz, etc.**
+```
+curl -fsSL https://raw.githubusercontent.com/mviereck/x11docker/master/x11docker | sudo bash -s -- --update
+xhost +local:docker
+nvidia-docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix \
+-v `pwd`/data:/usr/src/app/bevfusion/data --shm-size 16g bevfusion /bin/bash
+```
 ### Setup Environment 
 ```
 conda init
@@ -124,6 +131,10 @@ tmux
 Press `CTRL+b "` to split horizontally or `CTRL+b %` to split vertically. `CTRL+b [→, ←, ↑, ↓]` to switch between windows.
 Refer [link](https://www.shells.com/l/en-US/tutorial/Installing-and-using-tmux-on-Ubuntu-20-04) if you need more commands.
 ### Run code:-
+Install pretrained weights if needed:-
+```
+./tools/download_pretrained.sh
+```
 
  - 6 cameras + LiDAR mode
 ```
@@ -132,6 +143,7 @@ python3 tools/visualize_ros.py
 Publish Nuscenes data
 ```
 python3 tools/ros_publisher.py
+rqt
 ```
 
 - 1 camera + LiDAR mode
@@ -143,3 +155,4 @@ Run ROS bag file
 rosbag play data/[bagName].bag
 rqt
 ```
+After launching rqt, you can press Perspectives>Import, then select the one of the .perspective files given in the repository
