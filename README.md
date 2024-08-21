@@ -89,6 +89,8 @@ cd bevfusion
 nvidia-docker run -it -v `pwd`/data:/usr/src/app/bevfusion/data --shm-size 16g bevfusion /bin/bash
 ```
 If you have a bag file instead of Nuscenes dataset, you can put it in this folder and it will appear in your image.
+
+
 **Viewable GUI Applications like rqt, rviz, etc.**
 ```
 curl -fsSL https://raw.githubusercontent.com/mviereck/x11docker/master/x11docker | sudo bash -s -- --update
@@ -104,7 +106,7 @@ conda activate bevfusion
 python setup.py develop
 conda install -c conda-forge mpi4py openmpi
 ```
-If you mounted Nuscenes(or custom data in Nuscenes format), you need to run these commands once(this step can be done outside the Docker image as well, these dependencies are specific to dataset preparation):-
+**Dataset Preparation** - If you mounted Nuscenes(or custom data in Nuscenes format), you need to run these commands once(these dependencies are specific to dataset preparation and training):-
 ```
 apt-get install software-properties-common
 add-apt-repository ppa:ubuntu-toolchain-r/test
@@ -135,7 +137,11 @@ Install pretrained weights if needed:-
 ```
 ./tools/download_pretrained.sh
 ```
-
+ - Training(you must install the dataset preparation dependencies mentioned above before running these commands)
+```
+pip install yapf==0.40.1 setuptools==59.5.0
+torchpack dist-run -np 8 python tools/train.py configs/nuscenes/det/transfusion/secfpn/camera+lidar/swint_v0p075/convfuser.yaml --model.encoders.camera.backbone.init_cfg.checkpoint pretrained/swint-nuimages-pretrained.pth --load_from pretrained/lidar-only-det.pth 
+```
  - 6 cameras + LiDAR mode
 ```
 python3 tools/visualize_ros.py
