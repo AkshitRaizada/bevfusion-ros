@@ -56,7 +56,7 @@ sudo systemctl restart docker
 ```
 ### BEVFusion Installation :-
 ```
-git clone [AIRL URL]
+git clone -b Docker-working https://github.com/AkshitRaizada/bevfusion-ros.git
 cd bevfusion
 docker build . -t bevfusion
 ```
