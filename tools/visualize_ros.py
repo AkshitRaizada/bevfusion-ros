@@ -19,7 +19,7 @@ import copy
 import mmcv
 import torch
 from mmcv import Config
-from mmcv.parallel import MMDataParallel
+from mmcv.parallel import MMDistributedDataParallel
 from mmcv.parallel import DataContainer as DC
 import torch
 from mmcv.runner import load_checkpoint
@@ -57,7 +57,7 @@ def recursive_eval(obj, globals=None):
 
     return obj
 
-#dist.init()
+dist.init()
 config = "configs/nuscenes/det/transfusion/secfpn/camera+lidar/swint_v0p075/convfuser.yaml"
 mode = "pred"
 checkpoint = "pretrained/bevfusion-det.pth"
@@ -71,10 +71,8 @@ img_pub = []
 configs.load(config, recursive=True)
 
 cfg = Config(recursive_eval(configs), filename=config)
-cfg.dist_params = dict(backend='nccl')
-distributed = False
-#torch.backends.cudnn.benchmark = cfg.cudnn_benchmark
-#torch.cuda.set_device(dist.local_rank())
+torch.backends.cudnn.benchmark = cfg.cudnn_benchmark
+torch.cuda.set_device(dist.local_rank())
 
 # build the dataloader
 dataset = build_dataset(cfg.data[split])
@@ -93,9 +91,10 @@ if fp16_cfg is not None:
     wrap_fp16_model(model)
 load_checkpoint(model, checkpoint, map_location="cpu")
 
-model = MMDataParallel(
+model = MMDistributedDataParallel(
     model.cuda(),
-    device_ids=[torch.cuda.current_device()]
+    device_ids=[torch.cuda.current_device()],
+    broadcast_buffers=False,
 )
 model.eval()
 
