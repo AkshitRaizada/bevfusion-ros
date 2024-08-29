@@ -16,6 +16,8 @@ import copy
 import os
 import time
 import copy
+import warnings
+warnings.filterwarnings('ignore')
 
 import mmcv
 import torch
@@ -58,7 +60,7 @@ def recursive_eval(obj, globals=None):
 
     return obj
 
-#dist.init()
+dist.init()
 config = "configs/nuscenes/det/transfusion/secfpn/camera+lidar/swint_v0p075/convfuser.yaml"
 mode = "pred"
 checkpoint = "pretrained/bevfusion-det.pth"
@@ -72,6 +74,7 @@ img_pub = []
 configs.load(config, recursive=True)
 
 cfg = Config(recursive_eval(configs), filename=config)
+
 torch.backends.cudnn.benchmark = cfg.cudnn_benchmark
 torch.cuda.set_device(dist.local_rank())
 
@@ -95,7 +98,7 @@ load_checkpoint(model, checkpoint, map_location="cpu")
 model = MMDistributedDataParallel(
     model.cuda(),
     device_ids=[torch.cuda.current_device()],
-    broadcast_buffers=False
+    broadcast_buffers=False,
 )
 model.eval()
 
@@ -144,61 +147,61 @@ lidar_aug = DC([torch.tensor([[[1., 0., 0., 0.],
                 [0., 0., 1., 0.],
                 [0., 0., 0., 1.]]])])
 
-lidar2img = [np.array([[ 1.2429899e+03,  8.4064954e+02,  3.2762554e+01, -3.5435117e+02],
-       [-1.8201262e+01,  5.3679852e+02, -1.2255375e+03, -6.4470789e+02],
-       [-1.1702505e-02,  9.9847114e-01,  5.4022189e-02, -4.2520365e-01],
-       [ 0.0000000e+00,  0.0000000e+00,  0.0000000e+00,  1.0000000e+00]],
-      dtype=np.float32), np.array([[ 1.3649467e+03, -6.1926489e+02, -4.0339165e+01, -4.6164282e+02],
-       [ 3.7946234e+02,  3.2030728e+02, -1.2397948e+03, -6.9255627e+02],
-       [ 8.4340686e-01,  5.3631204e-01,  3.2159850e-02, -6.1037183e-01],
-       [ 0.0000000e+00,  0.0000000e+00,  0.0000000e+00,  1.0000000e+00]],
-      dtype=np.float32), np.array([[ 3.2369884e+01,  1.5031543e+03,  7.7623184e+01, -3.0243790e+02],
-       [-3.8932019e+02,  3.2044153e+02, -1.2374531e+03, -6.7942474e+02],
-       [-8.2341528e-01,  5.6594008e-01,  4.1219689e-02, -5.2967709e-01],
-       [ 0.0000000e+00,  0.0000000e+00,  0.0000000e+00,  1.0000000e+00]],
-      dtype=np.float32), np.array([[-8.0398230e+02, -8.5072388e+02, -2.6437662e+01, -8.7079596e+02],
-       [-1.0823281e+01, -4.4528595e+02, -8.1489746e+02, -7.0868420e+02],
-       [-8.3335005e-03, -9.9920046e-01, -3.9102800e-02, -1.0164535e+00],
-       [ 0.0000000e+00,  0.0000000e+00,  0.0000000e+00,  1.0000000e+00]],
-      dtype=np.float32), np.array([[-1.1865662e+03,  9.2326154e+02,  5.3264156e+01, -6.2534119e+02],
-       [-4.6262552e+02, -1.0254059e+02, -1.2524772e+03, -5.6182843e+02],
-       [-9.4758677e-01, -3.1948286e-01,  3.1694896e-03, -4.3252730e-01],
-       [ 0.0000000e+00,  0.0000000e+00,  0.0000000e+00,  1.0000000e+00]],
-      dtype=np.float32), np.array([[ 2.8518930e+02, -1.4692765e+03, -5.9563427e+01, -2.7260034e+02],
-       [ 4.4473605e+02, -1.2282570e+02, -1.2503927e+03, -5.8824615e+02],
-       [ 9.2405295e-01, -3.8224655e-01, -3.7098916e-03, -4.6464515e-01],
-       [ 0.0000000e+00,  0.0000000e+00,  0.0000000e+00,  1.0000000e+00]],
+lidar2img = [np.array([[ 1.77736154e+03, -2.94939487e+02,  9.84856736e+02,  2.97433627e+02],
+ [ 2.80664039e+01,  1.60542800e+03 , 1.23350117e+03 , 8.08662139e+02],
+ [-5.86050004e-03, -2.57744312e-01 , 9.66195405e-01 , 4.02859986e-01],
+ [ 0.00000000e+00,  0.00000000e+00 , 0.00000000e+00 , 1.00000000e+00]],
+      dtype=np.float32), np.array([[ 1.77736154e+03, -2.94939487e+02,  9.84856736e+02,  2.97433627e+02],
+ [ 2.80664039e+01,  1.60542800e+03 , 1.23350117e+03 , 8.08662139e+02],
+ [-5.86050004e-03, -2.57744312e-01 , 9.66195405e-01 , 4.02859986e-01],
+ [ 0.00000000e+00,  0.00000000e+00 , 0.00000000e+00 , 1.00000000e+00]],
+      dtype=np.float32), np.array([[ 1.77736154e+03, -2.94939487e+02,  9.84856736e+02,  2.97433627e+02],
+ [ 2.80664039e+01,  1.60542800e+03 , 1.23350117e+03 , 8.08662139e+02],
+ [-5.86050004e-03, -2.57744312e-01 , 9.66195405e-01 , 4.02859986e-01],
+ [ 0.00000000e+00,  0.00000000e+00 , 0.00000000e+00 , 1.00000000e+00]],
+      dtype=np.float32), np.array([[ 1.77736154e+03, -2.94939487e+02,  9.84856736e+02,  2.97433627e+02],
+ [ 2.80664039e+01,  1.60542800e+03 , 1.23350117e+03 , 8.08662139e+02],
+ [-5.86050004e-03, -2.57744312e-01 , 9.66195405e-01 , 4.02859986e-01],
+ [ 0.00000000e+00,  0.00000000e+00 , 0.00000000e+00 , 1.00000000e+00]],
+      dtype=np.float32), np.array([[ 1.77736154e+03, -2.94939487e+02,  9.84856736e+02,  2.97433627e+02],
+ [ 2.80664039e+01,  1.60542800e+03 , 1.23350117e+03 , 8.08662139e+02],
+ [-5.86050004e-03, -2.57744312e-01 , 9.66195405e-01 , 4.02859986e-01],
+ [ 0.00000000e+00,  0.00000000e+00 , 0.00000000e+00 , 1.00000000e+00]],
+      dtype=np.float32), np.array([[ 1.77736154e+03, -2.94939487e+02,  9.84856736e+02,  2.97433627e+02],
+ [ 2.80664039e+01,  1.60542800e+03 , 1.23350117e+03 , 8.08662139e+02],
+ [-5.86050004e-03, -2.57744312e-01 , 9.66195405e-01 , 4.02859986e-01],
+ [ 0.00000000e+00,  0.00000000e+00 , 0.00000000e+00 , 1.00000000e+00]],
       dtype=np.float32)]
 
-cam_in = DC([torch.tensor([[[[1.2528e+03, 0.0000e+00, 8.2659e+02, 0.0000e+00],
-          [0.0000e+00, 1.2528e+03, 4.6998e+02, 0.0000e+00],
-          [0.0000e+00, 0.0000e+00, 1.0000e+00, 0.0000e+00],
-          [0.0000e+00, 0.0000e+00, 0.0000e+00, 1.0000e+00]],
+cam_in = DC([torch.tensor([[[[1783.625000, 0.000000, 1017.166756, 0.000000],
+          [0.000000, 1869.401733, 777.848749, 0.000000],
+          [0.000000, 0.000000, 1.000000, 0.000000],
+          [0.000000, 0.000000, 0.000000, 1.000000]],
 
-         [[1.2567e+03, 0.0000e+00, 8.1779e+02, 0.0000e+00],
-          [0.0000e+00, 1.2567e+03, 4.5195e+02, 0.0000e+00],
-          [0.0000e+00, 0.0000e+00, 1.0000e+00, 0.0000e+00],
-          [0.0000e+00, 0.0000e+00, 0.0000e+00, 1.0000e+00]],
+         [[1783.625000, 0.000000, 1017.166756, 0.000000],
+          [0.000000, 1869.401733, 777.848749, 0.000000],
+          [0.000000, 0.000000, 1.000000, 0.000000],
+          [0.000000, 0.000000, 0.000000, 1.000000]],
 
-         [[1.2579e+03, 0.0000e+00, 8.2724e+02, 0.0000e+00],
-          [0.0000e+00, 1.2579e+03, 4.5092e+02, 0.0000e+00],
-          [0.0000e+00, 0.0000e+00, 1.0000e+00, 0.0000e+00],
-          [0.0000e+00, 0.0000e+00, 0.0000e+00, 1.0000e+00]],
+         [[1783.625000, 0.000000, 1017.166756, 0.000000],
+          [0.000000, 1869.401733, 777.848749, 0.000000],
+          [0.000000, 0.000000, 1.000000, 0.000000],
+          [0.000000, 0.000000, 0.000000, 1.000000]],
 
-         [[7.9689e+02, 0.0000e+00, 8.5778e+02, 0.0000e+00],
-          [0.0000e+00, 7.9689e+02, 4.7688e+02, 0.0000e+00],
-          [0.0000e+00, 0.0000e+00, 1.0000e+00, 0.0000e+00],
-          [0.0000e+00, 0.0000e+00, 0.0000e+00, 1.0000e+00]],
+         [[1783.625000, 0.000000, 1017.166756, 0.000000],
+          [0.000000, 1869.401733, 777.848749, 0.000000],
+          [0.000000, 0.000000, 1.000000, 0.000000],
+          [0.000000, 0.000000, 0.000000, 1.000000]],
 
-         [[1.2550e+03, 0.0000e+00, 8.2958e+02, 0.0000e+00],
-          [0.0000e+00, 1.2550e+03, 4.6717e+02, 0.0000e+00],
-          [0.0000e+00, 0.0000e+00, 1.0000e+00, 0.0000e+00],
-          [0.0000e+00, 0.0000e+00, 0.0000e+00, 1.0000e+00]],
+         [[1783.625000, 0.000000, 1017.166756, 0.000000],
+          [0.000000, 1869.401733, 777.848749, 0.000000],
+          [0.000000, 0.000000, 1.000000, 0.000000],
+          [0.000000, 0.000000, 0.000000, 1.000000]],
 
-         [[1.2500e+03, 0.0000e+00, 8.2538e+02, 0.0000e+00],
-          [0.0000e+00, 1.2500e+03, 4.6255e+02, 0.0000e+00],
-          [0.0000e+00, 0.0000e+00, 1.0000e+00, 0.0000e+00],
-          [0.0000e+00, 0.0000e+00, 0.0000e+00, 1.0000e+00]]]])])
+         [[1783.625000, 0.000000, 1017.166756, 0.000000],
+          [0.000000, 1869.401733, 777.848749, 0.000000],
+          [0.000000, 0.000000, 1.000000, 0.000000],
+          [0.000000, 0.000000, 0.000000, 1.000000]]]])])
 
 meta_dict = {
     "filename"        : ['./a.jpg','./b.jpg','./c.jpg','./d.jpg','./e.jpg','./f.jpg'],
@@ -242,27 +245,27 @@ def callback_lidar(msg):
     lidar_data_void = ros_numpy.numpify(msg)
     lidar_data = np.array(lidar_data_void.tolist())
 
-# def callback_image(data, num):
-#     global frame
-#     global bridge
-#     try:
-#         frame[num] = bridge.imgmsg_to_cv2(data)
+def callback_image(data, num):
+    global frame
+    global bridge
+    try:
+        frame[num] = bridge.imgmsg_to_cv2(data)
 
-#     except CvBridgeError as e:          #for handling the error
-#         print("Error"+str(e))
+    except CvBridgeError as e:          #for handling the error
+        print("Error"+str(e))
 
-# def callback_image1(data):
-#     return callback_image(data, 0)
-# def callback_image2(data):
-#     return callback_image(data, 1)
-# def callback_image3(data):
-#     return callback_image(data, 2)
-# def callback_image4(data):
-#     return callback_image(data, 3)
-# def callback_image5(data):
-#     return callback_image(data, 4)
-# def callback_image6(data):
-#     return callback_image(data, 5)
+def callback_image1(data):
+    return callback_image(data, 0)
+def callback_image2(data):
+    return callback_image(data, 1)
+def callback_image3(data):
+    return callback_image(data, 2)
+def callback_image4(data):
+    return callback_image(data, 3)
+def callback_image5(data):
+    return callback_image(data, 4)
+def callback_image6(data):
+    return callback_image(data, 5)
 counter = 0
 def main():
     global model
@@ -279,14 +282,19 @@ def main():
     # print((not len(frame[0]) == 0))
     # print((not len(lidar_data) == 0))
 
-    if (not len(lidar_data) == 0):
+    if ((not len(frame[0]) == 0) and (not len(lidar_data) == 0)):
+        frame_curr = copy.deepcopy(frame)
+        # print("Starting framer")
+        framer = [np.array(Image.fromarray(msg).resize((768, 432)).crop((32, 176, 736, 432))) for msg in frame_curr]
+        framer = [np.reshape(x, (3, 256, 704)) for x in framer]
+        data["img"].data[0] = torch.reshape(torch.from_numpy(np.stack(framer, axis=0)), (1, 6, 3, 256, 704))
         # mask = torch.full([1, 6, 3, 256, 704],0.0)
         # # mask[0] = torch.full([3, 256, 704],1.0)
         # data["img"].data[0] = mask
 
         lidar_cut = lidar_data[:,:-1]
         lidar_cut[::,4] = 0.0
-        print(lidar_cut)
+        # print(lidar_cut)
         data["points"].data[0][0] = torch.from_numpy(lidar_cut)
         # print("GOT POINTS")
         with torch.inference_mode():
@@ -331,18 +339,18 @@ def main():
         else:
             masks = None
 
-        # if "img" in data:
-        #     for k, image in enumerate(frame_curr):
-        #         img = visualize_camera(
-        #             "",
-        #             image,
-        #             bboxes=bboxes,
-        #             labels=labels,
-        #             transform=data["metas"].data[0][0]["lidar2image"][k],
-        #             classes=cfg.object_classes,
-        #         )
-        #         frame2 = bridge.cv2_to_imgmsg(img, "bgr8")
-        #         img_pub[k].publish(frame2)
+        if "img" in data:
+            for k, image in enumerate(frame_curr):
+                img = visualize_camera(
+                    "",
+                    image,
+                    bboxes=bboxes,
+                    labels=labels,
+                    transform=data["metas"].data[0][0]["lidar2image"][k],
+                    classes=cfg.object_classes,
+                )
+                frame2 = bridge.cv2_to_imgmsg(img, "bgr8")
+                img_pub[k].publish(frame2)
 
         # print(bboxes)
         # print(labels)
@@ -366,29 +374,27 @@ def main():
 
 
 if __name__ == "__main__":
-    try:
+    if True:
         img_pub = []
         image_sub = []
         lidar_sub = rospy.Subscriber("/velodyne_points", PointCloud2, callback_lidar, queue_size=1)
-        # image_sub.append(rospy.Subscriber("/camera1", Image2, callback_image1, queue_size=1))
-        # image_sub.append(rospy.Subscriber("/camera2", Image2, callback_image2, queue_size=1))
-        # image_sub.append(rospy.Subscriber("/camera3", Image2, callback_image3, queue_size=1))
-        # image_sub.append(rospy.Subscriber("/camera4", Image2, callback_image4, queue_size=1))
-        # image_sub.append(rospy.Subscriber("/camera5", Image2, callback_image5, queue_size=1))
-        # image_sub.append(rospy.Subscriber("/camera6", Image2, callback_image6, queue_size=1))
+        image_sub.append(rospy.Subscriber("/camera/image_color", Image2, callback_image1, queue_size=1))
+        image_sub.append(rospy.Subscriber("/camera/image_color", Image2, callback_image2, queue_size=1))
+        image_sub.append(rospy.Subscriber("/camera/image_color", Image2, callback_image3, queue_size=1))
+        image_sub.append(rospy.Subscriber("/camera/image_color", Image2, callback_image4, queue_size=1))
+        image_sub.append(rospy.Subscriber("/camera/image_color", Image2, callback_image5, queue_size=1))
+        image_sub.append(rospy.Subscriber("/camera/image_color", Image2, callback_image6, queue_size=1))
 
 
-        # img_pub.append(rospy.Publisher('/camera_output1', Image2, queue_size=10))
-        # img_pub.append(rospy.Publisher('/camera_output2', Image2, queue_size=10))
-        # img_pub.append(rospy.Publisher('/camera_output3', Image2, queue_size=10))
-        # img_pub.append(rospy.Publisher('/camera_output4', Image2, queue_size=10))
-        # img_pub.append(rospy.Publisher('/camera_output5', Image2, queue_size=10))
-        # img_pub.append(rospy.Publisher('/camera_output6', Image2, queue_size=10))
+        img_pub.append(rospy.Publisher('/camera_output1', Image2, queue_size=10))
+        img_pub.append(rospy.Publisher('/camera_output2', Image2, queue_size=10))
+        img_pub.append(rospy.Publisher('/camera_output3', Image2, queue_size=10))
+        img_pub.append(rospy.Publisher('/camera_output4', Image2, queue_size=10))
+        img_pub.append(rospy.Publisher('/camera_output5', Image2, queue_size=10))
+        img_pub.append(rospy.Publisher('/camera_output6', Image2, queue_size=10))
         pub2 = rospy.Publisher('/lidar_output', Image2, queue_size=10)
         while not rospy.is_shutdown():
             # c = time.time()
             main()
             # print(time.time()-c)
 
-    except Exception as e:
-        print("Error:", str(e))
